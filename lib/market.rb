@@ -43,8 +43,28 @@ class Market
         market_inventory[product] += quantity
       end
     end
-    
+
     market_inventory
   end
 
+  def sell(item, quantity)
+    if !total_inventory.keys.include?(item) || quantity > total_inventory[item]
+      return false
+    end
+
+    remainder = quantity
+    vendors_that_sell(item).each do |vendor|
+      break if remainder == 0
+
+      if remainder <= vendor.inventory[item]
+        vendor.inventory[item] -= remainder
+        remainder = 0
+      else
+        remainder -= vendor.inventory[item]
+        vendor.inventory[item] = 0
+      end
+    end
+
+    true
+  end
 end
